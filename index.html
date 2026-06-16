@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0f1320" />
+<title>CFA Level I — Revisão</title>
+<style>
+  :root{
+    --bg:#0f1320; --panel:#1a2032; --panel2:#222a40; --line:#2c3650;
+    --txt:#e8ecf6; --mut:#94a0bd; --acc:#4f8cff; --ok:#28c98a; --warn:#f5b14c;
+    --bad:#ff5d6c; --hard:#ff9f43; --good:#3ad07a; --easy:#4f8cff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px}
+  header{padding:16px 16px 8px;text-align:center}
+  header h1{font-size:18px;margin:0;letter-spacing:.5px}
+  header .sub{color:var(--mut);font-size:12px;margin-top:2px}
+  .wrap{max-width:560px;margin:0 auto;padding:0 14px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .stat{flex:1;min-width:90px;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:24px}
+  .stat span{color:var(--mut);font-size:11px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    padding:20px;margin:14px 0;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+  .pill{display:inline-block;font-size:11px;color:var(--mut);background:var(--panel2);
+    border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin:0 4px 8px 0}
+  .q{font-size:18px;line-height:1.5;margin:6px 0 14px;font-weight:600}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--txt);
+    border:1px solid var(--line);border-radius:12px;padding:14px;margin:8px 0;font-size:15px;cursor:pointer}
+  .opt:active{transform:scale(.99)}
+  .opt.correct{background:rgba(40,201,138,.18);border-color:var(--ok)}
+  .opt.wrong{background:rgba(255,93,108,.16);border-color:var(--bad)}
+  .answer{margin-top:10px;padding:12px;border-radius:12px;background:var(--panel2);
+    border:1px dashed var(--line);font-size:14px;line-height:1.5;display:none}
+  .answer.show{display:block}
+  .btnrow{display:flex;gap:8px;margin-top:14px}
+  .btn{flex:1;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;
+    color:#fff;cursor:pointer}
+  .btn:active{transform:scale(.98)}
+  .b-again{background:var(--bad)} .b-hard{background:var(--hard)}
+  .b-good{background:var(--good)} .b-easy{background:var(--easy)}
+  .b-ghost{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
+  .b-acc{background:var(--acc)}
+  .center{text-align:center;color:var(--mut);padding:40px 10px}
+  nav{position:fixed;bottom:0;left:0;right:0;background:#11162a;border-top:1px solid var(--line);
+    display:flex;justify-content:space-around;padding:8px 4px 14px;z-index:5}
+  nav button{background:none;border:none;color:var(--mut);font-size:11px;display:flex;
+    flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1}
+  nav button .ic{font-size:20px}
+  nav button.active{color:var(--acc)}
+  .bar{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-top:6px}
+  .bar>i{display:block;height:100%;background:var(--acc)}
+  .topicrow{margin:10px 0}
+  .topicrow .t{display:flex;justify-content:space-between;font-size:13px}
+  label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+  input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);
+    color:var(--txt);border-radius:10px;padding:11px;font-size:14px;font-family:inherit}
+  textarea{min-height:64px;resize:vertical}
+  .flip{font-size:20px;line-height:1.5;text-align:center;padding:10px 0;min-height:120px;
+    display:flex;align-items:center;justify-content:center;flex-direction:column}
+  .muted{color:var(--mut);font-size:13px}
+  .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#000a;
+    color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;z-index:9;opacity:0;
+    transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+  .streak{font-size:13px;color:var(--warn)}
+  h3{margin:18px 0 6px;font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <h1>📚 CFA Level I — Revisão</h1>
+  <div class="sub" id="dateInfo">Repetição espaçada • dados salvos no seu dispositivo</div>
+</header>
+
+<div class="wrap" id="view"></div>
+
+<nav>
+  <button data-tab="home" class="active"><span class="ic">🏠</span>Início</button>
+  <button data-tab="review"><span class="ic">🔁</span>Revisar</button>
+  <button data-tab="quiz"><span class="ic">🎯</span>Quiz</button>
+  <button data-tab="flash"><span class="ic">⚡</span>Relâmpago</button>
+  <button data-tab="sessao"><span class="ic">⏱️</span>Sessão</button>
+  <button data-tab="manage"><span class="ic">⚙️</span>Dados</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ SEED (fallback offline). Espelha banco-dados/cards.json ============ */
+const SEED = [{"id":"quant-tvm-001","tipo":"questao","topico":"Quantitative Methods","subtopico":"Time Value of Money","dificuldade":3,"tags":["EAR","compounding"],"fonte":"Resumo S1 - TVM","enunciado":"EAR de uma stated rate de 6% com capitalizacao mensal?","opcoes":["6,00%","6,17%","6,27%"],"correta":1,"explicacao":"EAR = (1 + 0,06/12)^12 - 1 = 1,005^12 - 1 = 6,17%."},{"id":"quant-tvm-002","tipo":"questao","topico":"Quantitative Methods","subtopico":"Time Value of Money","dificuldade":3,"tags":["perpetuity"],"fonte":"Resumo S1 - TVM","enunciado":"Perpetuity paga $500/ano, required return 8%, 1o pagamento em 1 ano. PV?","opcoes":["$6.250","$5.787","$40.000"],"correta":0,"explicacao":"PV = A/r = 500/0,08 = $6.250."},{"id":"quant-tvm-f01","tipo":"flashcard","topico":"Quantitative Methods","subtopico":"Time Value of Money","dificuldade":2,"tags":["formula","annuity"],"fonte":"Resumo S1 - TVM","frente":"Formula do PV de uma ordinary annuity","verso":"PV = A x [(1 - (1+r)^-n) / r]. Para annuity DUE, multiplique por (1+r)."},{"id":"quant-tvm-f02","tipo":"flashcard","topico":"Quantitative Methods","subtopico":"Time Value of Money","dificuldade":2,"tags":["formula","EAR","continuous"],"fonte":"Resumo S1 - TVM","frente":"EAR com capitalizacao continua","verso":"EAR = e^(r_stated) - 1. Ex.: 10% continuo -> e^0,10 - 1 = 10,52%."},{"id":"quant-tvm-c01","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Time Value of Money","dificuldade":4,"tags":["pegadinha","perpetuity"],"fonte":"Resumo S1 - TVM","frente":"Por que a perpetuity (A/r) da um PV 'um periodo antes'?","verso":"A/r calcula o valor na data IMEDIATAMENTE anterior ao 1o pagamento. 1o pagamento no ano 1 -> A/r ja da o valor no ano 0. 1o pagamento no ano 4 -> obtem o valor no ano 3 e precisa descontar mais 3 periodos."},{"id":"quant-tvm-c02","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Interest rates","dificuldade":3,"tags":["componentes","taxa"],"fonte":"Resumo S1 - TVM","frente":"Componentes de uma taxa de juros nominal","verso":"r = Real risk-free rate + Inflation premium + Default risk premium + Liquidity premium + Maturity premium. Os dois primeiros = nominal risk-free rate."},{"id":"quant-tvm-003","tipo":"questao","topico":"Quantitative Methods","subtopico":"Time Value of Money","dificuldade":3,"tags":["FV","annuity"],"fonte":"Quant - TVM","enunciado":"Voce deposita $1.000 ao fim de cada ano por 5 anos a 6%. Qual o FV (ordinary annuity)?","opcoes":["$5.000","$5.637","$5.975"],"correta":1,"explicacao":"FV = A x [((1+r)^n - 1)/r] = 1000 x [(1,06^5 - 1)/0,06] = 1000 x 5,637 = $5.637."},{"id":"quant-stat-f01","tipo":"flashcard","topico":"Quantitative Methods","subtopico":"Statistics","dificuldade":2,"tags":["formula","risco"],"fonte":"Quant - Statistics","frente":"Coefficient of Variation (CV)","verso":"CV = desvio-padrao / media. Mede risco por unidade de retorno (dispersao relativa). Menor CV = melhor (menos risco por unidade de media)."},{"id":"quant-stat-c01","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Statistics","dificuldade":3,"tags":["mean","pegadinha"],"fonte":"Quant - Statistics","frente":"Media geometrica vs aritmetica: qual e maior?","verso":"Media geometrica <= media aritmetica (igualdade so se todos os valores forem iguais). A geometrica e usada para retornos compostos ao longo do tempo; a aritmetica para retorno esperado de um unico periodo."},{"id":"quant-stat-c02","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Statistics","dificuldade":4,"tags":["skewness","pegadinha"],"fonte":"Quant - Statistics","frente":"Distribuicao com skew POSITIVO (right-skewed): ordem de mean, median, mode?","verso":"Positive skew: cauda longa a DIREITA -> mean > median > mode. Negative skew: mean < median < mode. (A media e 'puxada' pela cauda.)"},{"id":"quant-stat-c03","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Statistics","dificuldade":3,"tags":["kurtosis"],"fonte":"Quant - Statistics","frente":"Distribuicao leptokurtic","verso":"Leptokurtic = kurtosis > 3 (excess kurtosis > 0): caudas mais gordas e pico mais alto que a normal -> maior risco de eventos extremos. Platykurtic = excess < 0."},{"id":"quant-stat-f02","tipo":"flashcard","topico":"Quantitative Methods","subtopico":"Statistics","dificuldade":2,"tags":["formula","Sharpe"],"fonte":"Quant - Statistics","frente":"Sharpe ratio","verso":"Sharpe = (Rp - Rf) / sigma_p. Excesso de retorno por unidade de risco TOTAL (desvio-padrao). Quanto maior, melhor."},{"id":"quant-prob-c01","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Probability","dificuldade":3,"tags":["correlation"],"fonte":"Quant - Probability","frente":"Correlacao: formula e intervalo","verso":"Corr(a,b) = Cov(a,b) / (sigma_a x sigma_b). Varia de -1 a +1. Correlacao mede a forca da relacao LINEAR; nao implica causalidade."},{"id":"quant-hyp-c01","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Hypothesis Testing","dificuldade":4,"tags":["erro-tipo-I","decorar"],"fonte":"Quant - Hypothesis Testing","frente":"Erro Tipo I vs Tipo II e Power","verso":"Tipo I = rejeitar uma H0 VERDADEIRA (probabilidade = nivel de significancia alfa). Tipo II = NAO rejeitar uma H0 FALSA (beta). Power of test = 1 - beta = prob. de rejeitar corretamente uma H0 falsa."},{"id":"quant-hyp-001","tipo":"questao","topico":"Quantitative Methods","subtopico":"Hypothesis Testing","dificuldade":3,"tags":["p-value"],"fonte":"Quant - Hypothesis Testing","enunciado":"Um p-value de 0,03 significa que:","opcoes":["Ha 3% de chance da hipotese alternativa ser falsa","Rejeitamos H0 a 5% mas nao a 1%","A H0 e verdadeira com 97% de confianca"],"correta":1,"explicacao":"Rejeita-se H0 quando p-value < alfa. Com p=0,03: rejeita a 5% (0,03<0,05) mas nao a 1% (0,03>0,01). O p-value e o menor nivel de significancia em que H0 e rejeitada."},{"id":"quant-fi-c01","tipo":"conceito","topico":"Quantitative Methods","subtopico":"Rates & Returns","dificuldade":3,"tags":["HPR","money-weighted"],"fonte":"Quant - Returns","frente":"Money-weighted vs time-weighted return","verso":"Money-weighted = IRR dos fluxos da carteira (sensivel ao timing e tamanho dos aportes). Time-weighted = retorno composto por subperiodos, ELIMINA o efeito de aportes/saques -> padrao para avaliar o GESTOR (e o exigido por GIPS)."},{"id":"ethics-001","tipo":"flashcard","topico":"Ethics","subtopico":"Code of Ethics","dificuldade":3,"tags":["standards","decorar"],"fonte":"Ethics","frente":"Os 6 componentes do Code of Ethics (resumo)","verso":"Agir com integridade/competencia/diligencia; colocar integridade da profissao e interesse dos clientes acima dos proprios; usar julgamento profissional razoavel; praticar e incentivar conduta etica; promover integridade dos mercados; manter/melhorar competencia profissional."},{"id":"ethics-002","tipo":"conceito","topico":"Ethics","subtopico":"Standards of Professional Conduct","dificuldade":4,"tags":["standards","decorar","pegadinha"],"fonte":"Ethics","frente":"Os 7 Standards of Professional Conduct (I a VII)","verso":"I. Professionalism; II. Integrity of Capital Markets; III. Duties to Clients; IV. Duties to Employers; V. Investment Analysis, Recommendations & Actions; VI. Conflicts of Interest; VII. Responsibilities as a CFA Institute Member/Candidate."},{"id":"ethics-c01","tipo":"conceito","topico":"Ethics","subtopico":"Integrity of Capital Markets","dificuldade":4,"tags":["MNPI","II-A"],"fonte":"Ethics","frente":"Standard II(A) - Material Nonpublic Information","verso":"Membros NAO podem agir nem induzir outros a agir com base em informacao material e nao-publica. 'Material' = afetaria o preco / decisao do investidor. Mosaic theory: combinar info publica + nao-material e PERMITIDO."},{"id":"ethics-c02","tipo":"conceito","topico":"Ethics","subtopico":"Duties to Clients","dificuldade":3,"tags":["III-B","fair-dealing"],"fonte":"Ethics","frente":"Standard III(B) - Fair Dealing","verso":"Tratar todos os clientes de forma JUSTA (nao necessariamente igual) ao divulgar recomendacoes ou agir. Ex.: comunicar uma recomendacao a todos os clientes simultaneamente, sem favorecer alguns."},{"id":"ethics-c03","tipo":"conceito","topico":"Ethics","subtopico":"Conflicts of Interest","dificuldade":3,"tags":["VI-A","disclosure"],"fonte":"Ethics","frente":"Standard VI(A) - Disclosure of Conflicts","verso":"Divulgar de forma clara e completa, com linguagem simples, todos os assuntos que possam comprometer a independencia/objetividade (ex.: posicoes proprias, relacao com o emissor, formas de remuneracao)."},{"id":"ethics-c04","tipo":"conceito","topico":"Ethics","subtopico":"GIPS","dificuldade":2,"tags":["GIPS"],"fonte":"Ethics","frente":"Qual o proposito do GIPS?","verso":"Padroes VOLUNTARIOS de apresentacao de performance que garantem representacao justa e divulgacao completa. Aplicam-se a FIRMAS (nao a individuos), exigem incluir TODas as carteiras discricionarias em composites. Nao auditam, promovem comparabilidade."},{"id":"econ-001","tipo":"questao","topico":"Economics","subtopico":"Market structures","dificuldade":2,"tags":["microeconomia"],"fonte":"Economics","enunciado":"Em qual estrutura a firma e price taker, com produto homogeneo e sem barreiras de entrada?","opcoes":["Monopolio","Concorrencia perfeita","Oligopolio"],"correta":1,"explicacao":"Concorrencia perfeita: muitos vendedores, produto homogeneo, sem barreiras, firma e price taker (curva de demanda horizontal)."},{"id":"econ-f01","tipo":"flashcard","topico":"Economics","subtopico":"Demand & Supply","dificuldade":2,"tags":["elasticidade","formula"],"fonte":"Economics","frente":"Price elasticity of demand","verso":"E_d = (%variacao na quantidade demandada) / (%variacao no preco). |E|>1 elastica; |E|<1 inelastica; |E|=1 unitaria. Receita total sobe quando se reduz preco SE a demanda for elastica."},{"id":"econ-c01","tipo":"conceito","topico":"Economics","subtopico":"Aggregate Output","dificuldade":3,"tags":["GDP","formula"],"fonte":"Economics","frente":"GDP pela abordagem de despesa","verso":"GDP = C + I + G + (X - M), onde C=consumo, I=investimento, G=gastos do governo, X=exportacoes, M=importacoes. (X-M) = exportacoes liquidas."},{"id":"econ-c02","tipo":"conceito","topico":"Economics","subtopico":"Monetary & Fiscal Policy","dificuldade":3,"tags":["politica"],"fonte":"Economics","frente":"Politica monetaria EXPANSIONISTA: o que o banco central faz?","verso":"Reduz a taxa de juros / compra titulos / reduz compulsorio -> aumenta oferta de moeda -> estimula investimento e consumo. Contracionista = oposto (sobe juros para conter inflacao)."},{"id":"econ-f02","tipo":"flashcard","topico":"Economics","subtopico":"Interest rates","dificuldade":2,"tags":["Fisher","formula"],"fonte":"Economics","frente":"Relacao de Fisher","verso":"(1 + nominal) = (1 + real) x (1 + inflacao esperada). Aproximacao: taxa nominal ~ taxa real + inflacao esperada."},{"id":"econ-c03","tipo":"conceito","topico":"Economics","subtopico":"Currency exchange","dificuldade":4,"tags":["FX","pegadinha"],"fonte":"Economics","frente":"Forward em premio/desconto e diferencial de juros","verso":"A moeda do pais com MAIOR taxa de juros negocia com DESCONTO no forward (covered interest rate parity). O forward compensa o diferencial de juros, evitando arbitragem."},{"id":"fsa-001","tipo":"flashcard","topico":"Financial Statement Analysis","subtopico":"Cash flow","dificuldade":3,"tags":["cash-flow","IFRS-GAAP"],"fonte":"FSA","frente":"Classificacao de juros PAGOS: IFRS vs US GAAP","verso":"IFRS: juros pagos em CFO ou CFF (escolha). US GAAP: juros pagos sempre em CFO. Dividendos pagos: IFRS CFO ou CFF; US GAAP sempre CFF."},{"id":"fsa-c01","tipo":"conceito","topico":"Financial Statement Analysis","subtopico":"Inventories","dificuldade":4,"tags":["LIFO-FIFO","pegadinha"],"fonte":"FSA","frente":"Em precos CRESCENTES: efeitos de LIFO vs FIFO","verso":"LIFO: COGS maior -> lucro liquido MENOR, impostos menores, estoque final MENOR (custos antigos). FIFO: COGS menor -> lucro e estoque MAIORES. IFRS PROIBE LIFO; US GAAP permite."},{"id":"fsa-c02","tipo":"conceito","topico":"Financial Statement Analysis","subtopico":"Inventories","dificuldade":3,"tags":["writedown","IFRS-GAAP"],"fonte":"FSA","frente":"Write-down de estoque: IFRS vs US GAAP","verso":"IFRS: estoque ao menor entre custo e NRV (net realizable value); REVERSAO permitida ate o custo original. US GAAP: menor entre custo e market (ou NRV); reversao NAO permitida."},{"id":"fsa-f01","tipo":"flashcard","topico":"Financial Statement Analysis","subtopico":"Income statement","dificuldade":3,"tags":["EPS","formula"],"fonte":"FSA","frente":"Basic EPS","verso":"Basic EPS = (Lucro liquido - dividendos preferenciais) / media ponderada de acoes ordinarias. Diluted EPS inclui titulos conversiveis/opcoes que reduzem o EPS (if-converted method)."},{"id":"fsa-c03","tipo":"conceito","topico":"Financial Statement Analysis","subtopico":"Ratios","dificuldade":4,"tags":["DuPont","formula"],"fonte":"FSA","frente":"DuPont de 3 fatores para ROE","verso":"ROE = Net Profit Margin (NI/Vendas) x Asset Turnover (Vendas/Ativos) x Financial Leverage (Ativos/Equity). Decompoe rentabilidade, eficiencia e alavancagem."},{"id":"fsa-001q","tipo":"questao","topico":"Financial Statement Analysis","subtopico":"Ratios","dificuldade":2,"tags":["liquidez"],"fonte":"FSA","enunciado":"O quick ratio (acid-test) EXCLUI qual item do current ratio?","opcoes":["Contas a receber","Estoques","Caixa"],"correta":1,"explicacao":"Quick ratio = (caixa + aplicacoes de curto prazo + recebiveis) / passivo circulante. Exclui ESTOQUES (menos liquidos) e despesas antecipadas."},{"id":"fsa-c04","tipo":"conceito","topico":"Financial Statement Analysis","subtopico":"Income taxes","dificuldade":4,"tags":["DTL","pegadinha"],"fonte":"FSA","frente":"Quando surge um Deferred Tax Liability (DTL)?","verso":"Quando o lucro CONTABIL > lucro TRIBUTAVEL temporariamente (ex.: depreciacao acelerada para fins fiscais). A empresa paga menos imposto agora e mais no futuro -> passivo diferido."},{"id":"corp-f01","tipo":"flashcard","topico":"Corporate Issuers","subtopico":"Cost of Capital","dificuldade":3,"tags":["WACC","formula"],"fonte":"Corporate Issuers","frente":"Formula do WACC","verso":"WACC = wd x rd x (1 - t) + wp x rp + we x re. Usa pesos a VALOR DE MERCADO. So a divida tem o beneficio fiscal (1 - t)."},{"id":"corp-c01","tipo":"conceito","topico":"Corporate Issuers","subtopico":"Capital Budgeting","dificuldade":4,"tags":["NPV-IRR","pegadinha"],"fonte":"Corporate Issuers","frente":"Conflito entre NPV e IRR: qual prevalece?","verso":"Para projetos MUTUAMENTE EXCLUDENTES, prefira o NPV. O NPV assume reinvestimento ao custo de capital (mais realista); o IRR assume reinvestimento na propria IRR. Conflitos vem de diferencas de escala ou timing dos fluxos."},{"id":"corp-f02","tipo":"flashcard","topico":"Corporate Issuers","subtopico":"Cost of Capital","dificuldade":2,"tags":["CAPM","formula"],"fonte":"Corporate Issuers","frente":"Custo do equity via CAPM","verso":"re = Rf + beta x (E[Rm] - Rf). O termo (E[Rm] - Rf) e o equity risk premium (premio de risco de mercado)."},{"id":"corp-c02","tipo":"conceito","topico":"Corporate Issuers","subtopico":"Leverage","dificuldade":4,"tags":["alavancagem"],"fonte":"Corporate Issuers","frente":"Degree of Operating Leverage (DOL) - intuicao","verso":"DOL = %variacao no EBIT / %variacao nas vendas. Alta alavancagem OPERACIONAL (muitos custos fixos) -> lucro mais sensivel a variacoes nas vendas -> maior risco do negocio."},{"id":"eq-f01","tipo":"flashcard","topico":"Equity Investments","subtopico":"Equity Valuation","dificuldade":3,"tags":["Gordon","DDM","formula"],"fonte":"Equity","frente":"Gordon Growth Model (DDM de crescimento constante)","verso":"V0 = D1 / (r - g), onde D1 = D0 x (1+g). Exige r > g. Muito sensivel ao spread (r - g)."},{"id":"eq-c01","tipo":"conceito","topico":"Equity Investments","subtopico":"Equity Valuation","dificuldade":4,"tags":["PE-justificado","formula"],"fonte":"Equity","frente":"P/E justificado (leading)","verso":"Leading P/E = payout ratio / (r - g). Trailing P/E = payout x (1+g) / (r - g). Derivado do Gordon Growth dividindo por earnings."},{"id":"eq-001","tipo":"questao","topico":"Equity Investments","subtopico":"Equity Valuation","dificuldade":2,"tags":["preferencial"],"fonte":"Equity","enunciado":"Acao preferencial paga dividendo fixo de $4/ano, required return 8%. Valor?","opcoes":["$32","$50","$0,32"],"correta":1,"explicacao":"Preferencial perpetua: V = D/r = 4/0,08 = $50."},{"id":"eq-c02","tipo":"conceito","topico":"Equity Investments","subtopico":"Industry Analysis","dificuldade":3,"tags":["Porter"],"fonte":"Equity","frente":"As 5 forcas de Porter","verso":"1) Ameaca de novos entrantes; 2) Poder de barganha dos fornecedores; 3) Poder de barganha dos compradores; 4) Ameaca de substitutos; 5) Rivalidade entre concorrentes. Determinam a atratividade/lucratividade do setor."},{"id":"fi-f01","tipo":"flashcard","topico":"Fixed Income","subtopico":"Bond Pricing","dificuldade":2,"tags":["preco-yield"],"fonte":"Fixed Income","frente":"Relacao preco x yield de um bond","verso":"Inversa e convexa: yield sobe -> preco cai (e vice-versa). Premium bond: coupon > yield (preco > par). Discount: coupon < yield (preco < par). Par: coupon = yield."},{"id":"fi-c01","tipo":"conceito","topico":"Fixed Income","subtopico":"Duration","dificuldade":4,"tags":["duration","formula"],"fonte":"Fixed Income","frente":"Modified duration: formula e uso","verso":"Modified Duration = Macaulay Duration / (1 + y/k). Variacao % aproximada no preco ~ -ModDur x (variacao no yield). Ex.: ModDur 5, yield +1% (0,01) -> preco cai ~5%."},{"id":"fi-c02","tipo":"conceito","topico":"Fixed Income","subtopico":"Convexity","dificuldade":4,"tags":["convexity","pegadinha"],"fonte":"Fixed Income","frente":"Para que serve a convexidade?","verso":"Duration sozinha subestima o ganho de preco (yield cai) e superestima a perda (yield sobe). A convexidade POSITIVA corrige isso: delta% preco ~ -ModDur x delta_y + 0,5 x Convexidade x (delta_y)^2."},{"id":"fi-001","tipo":"questao","topico":"Fixed Income","subtopico":"Yield Measures","dificuldade":2,"tags":["current-yield"],"fonte":"Fixed Income","enunciado":"Bond com coupon anual de $60, preco $1.200. Current yield?","opcoes":["6,0%","5,0%","7,2%"],"correta":1,"explicacao":"Current yield = coupon anual / preco = 60/1.200 = 5,0%. (Ignora ganho/perda de capital e reinvestimento.)"},{"id":"fi-c03","tipo":"conceito","topico":"Fixed Income","subtopico":"Credit Risk","dificuldade":3,"tags":["credito"],"fonte":"Fixed Income","frente":"Componentes do credit spread / risco de credito","verso":"Expected loss = Probability of Default (PD) x Loss Given Default (LGD). LGD = 1 - recovery rate. O spread de credito remunera default risk + liquidez. Spread sobe -> preco do bond cai."},{"id":"der-f01","tipo":"flashcard","topico":"Derivatives","subtopico":"Options","dificuldade":4,"tags":["put-call-parity","formula"],"fonte":"Derivatives","frente":"Put-Call Parity","verso":"C + PV(X) = P + S0, onde PV(X) = X / (1+rf)^T = bond livre de risco. Reorganizando: fiduciary call = protective put. Base para precificar e detectar arbitragem."},{"id":"der-c01","tipo":"conceito","topico":"Derivatives","subtopico":"Forwards & Futures","dificuldade":3,"tags":["forward-futures","pegadinha"],"fonte":"Derivatives","frente":"Forward vs Futures: principal diferenca","verso":"Futures: padronizados, negociados em bolsa, com camara de compensacao e MARCACAO A MERCADO diaria (margem). Forwards: customizados, OTC, sem marcacao diaria -> maior risco de contraparte."},{"id":"der-c02","tipo":"conceito","topico":"Derivatives","subtopico":"Forwards","dificuldade":2,"tags":["payoff"],"fonte":"Derivatives","frente":"Payoff de uma posicao LONG em forward no vencimento","verso":"Payoff long = ST - F0 (preco a vista no vencimento menos preco forward contratado). Short = F0 - ST. Soma zero entre as partes."},{"id":"alt-c01","tipo":"conceito","topico":"Alternative Investments","subtopico":"Hedge Funds","dificuldade":3,"tags":["fees","high-water"],"fonte":"Alternatives","frente":"Estrutura de taxas '2 and 20' e high-water mark","verso":"2% de management fee (sobre AUM) + 20% de performance fee (sobre o ganho). High-water mark: a taxa de performance so e cobrada sobre ganhos ACIMA do maior valor anterior - evita cobrar duas vezes pela mesma recuperacao."},{"id":"alt-c02","tipo":"conceito","topico":"Alternative Investments","subtopico":"Private Equity","dificuldade":3,"tags":["J-curve"],"fonte":"Alternatives","frente":"O que e a 'J-curve' em private equity?","verso":"Nos primeiros anos o fundo tem retornos NEGATIVOS (taxas + investimentos imaturos) e depois retornos positivos ao realizar as saidas -> grafico de retorno acumulado em formato de J."},{"id":"alt-001","tipo":"questao","topico":"Alternative Investments","subtopico":"Real Estate","dificuldade":2,"tags":["imoveis"],"fonte":"Alternatives","enunciado":"Imovel gera NOI de $100.000/ano e cap rate de mercado e 8%. Valor estimado (income approach)?","opcoes":["$800.000","$1.250.000","$8.000"],"correta":1,"explicacao":"Valor = NOI / cap rate = 100.000 / 0,08 = $1.250.000 (direct capitalization)."},{"id":"pm-f01","tipo":"flashcard","topico":"Portfolio Management","subtopico":"CAPM","dificuldade":3,"tags":["CAPM","SML","formula"],"fonte":"Portfolio Management","frente":"CAPM / Security Market Line","verso":"E(Ri) = Rf + beta_i x (E[Rm] - Rf). A SML plota retorno esperado vs BETA (risco sistematico). Ativos acima da SML estao subvalorizados."},{"id":"pm-c01","tipo":"conceito","topico":"Portfolio Management","subtopico":"Risk","dificuldade":4,"tags":["risco-sistematico","pegadinha"],"fonte":"Portfolio Management","frente":"Risco sistematico vs nao-sistematico: qual e remunerado?","verso":"So o risco SISTEMATICO (de mercado, medido por beta) e remunerado, pois nao pode ser diversificado. O risco NAO-sistematico (especifico da empresa) e eliminavel via diversificacao -> o mercado nao paga premio por ele."},{"id":"pm-f02","tipo":"flashcard","topico":"Portfolio Management","subtopico":"Portfolio Risk","dificuldade":4,"tags":["variancia","formula"],"fonte":"Portfolio Management","frente":"Variancia de uma carteira de 2 ativos","verso":"Var_p = w1^2 x sigma1^2 + w2^2 x sigma2^2 + 2 x w1 x w2 x rho12 x sigma1 x sigma2. Quanto MENOR a correlacao (rho), maior o beneficio de diversificacao."},{"id":"pm-c02","tipo":"conceito","topico":"Portfolio Management","subtopico":"IPS","dificuldade":3,"tags":["IPS","decorar"],"fonte":"Portfolio Management","frente":"Objetivos e restricoes de um Investment Policy Statement (IPS)","verso":"Objetivos: RETORNO e RISCO (tolerancia/capacidade). Restricoes (mnemonico LLTTU): Liquidity, Legal/regulatory, Tax, Time horizon, Unique circumstances."},{"id":"pm-c03","tipo":"conceito","topico":"Portfolio Management","subtopico":"Efficient Frontier","dificuldade":3,"tags":["fronteira"],"fonte":"Portfolio Management","frente":"Capital Market Line (CML) vs fronteira eficiente","verso":"Com um ativo livre de risco, a melhor combinacao e a CML (reta de Rf tangente a fronteira no market portfolio). Todo investidor detem o market portfolio + ativo livre de risco (two-fund separation), variando so a proporcao conforme a aversao ao risco."}];
+
+/* ============ Estado / persistência ============ */
+const LS_PROG="cfa_progress", LS_USER="cfa_usercards", LS_META="cfa_meta",
+      LS_SESS="cfa_sessions", LS_ACTIVE="cfa_active";
+const META_SEMANAL=20; // meta de horas/semana
+let CARDS=[];
+let progress=load(LS_PROG,{});
+let userCards=load(LS_USER,[]);
+let meta=load(LS_META,{streak:0,lastDay:null,reviews:0});
+let sessions=load(LS_SESS,[]);
+let active=load(LS_ACTIVE,null);
+
+/* Blocos planejados (para checar se estudou no horário certo) */
+const JANELAS={
+  util:[ {nome:"🌅 Manhã (conteúdo novo)",ini:"06:00",fim:"07:15"},
+         {nome:"🍽️ Almoço (app)",ini:"12:40",fim:"13:05"},
+         {nome:"🌙 Noite (questões)",ini:"20:30",fim:"21:30"},
+         {nome:"🛌 Pré-sono (app)",ini:"22:20",fim:"22:45"} ],
+  sab:[ {nome:"Sábado manhã",ini:"09:00",fim:"12:00"},
+        {nome:"Sábado tarde",ini:"16:00",fim:"17:00"} ],
+  dom:[ {nome:"Domingo manhã",ini:"09:30",fim:"11:00"},
+        {nome:"Domingo tarde",ini:"17:00",fim:"17:40"} ]
+};
+function janelasDoDia(ts){const d=new Date(ts).getDay();return d===0?JANELAS.dom:d===6?JANELAS.sab:JANELAS.util}
+function hm(s){const[h,m]=s.split(":").map(Number);return h*60+m}
+function classifica(ts){ // retorna {onTime, bloco}
+  const min=new Date(ts).getHours()*60+new Date(ts).getMinutes();
+  for(const j of janelasDoDia(ts)){ if(min>=hm(j.ini)-15 && min<=hm(j.fim)+30) return {onTime:true,bloco:j.nome}; }
+  return {onTime:false,bloco:"Extra (fora do plano)"};
+}
+
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600)}
+
+/* ============ SM-2 (repetição espaçada) ============ */
+function getState(id){return progress[id]||{reps:0,interval:0,ease:2.5,due:0,last:0}}
+function review(id,rating){
+  const s=getState(id);
+  const q={again:2,hard:3,good:4,easy:5}[rating];
+  if(q<3){s.reps=0;s.interval=0;}
+  else{
+    if(s.reps===0)s.interval=1;
+    else if(s.reps===1)s.interval=(rating==='easy'?6:3);
+    else s.interval=Math.max(1,Math.round(s.interval*s.ease*(rating==='hard'?0.7:rating==='easy'?1.3:1)));
+    s.reps++;
+  }
+  s.ease=Math.max(1.3, s.ease + (0.1-(5-q)*(0.08+(5-q)*0.02)));
+  s.due = Date.now() + (q<3 ? 10*60*1000 : s.interval*864e5);
+  s.last=Date.now();
+  progress[id]=s; save(LS_PROG,progress);
+  bumpStreak();
+}
+function bumpStreak(){
+  const today=new Date().toDateString();
+  if(meta.lastDay!==today){
+    const y=new Date(Date.now()-864e5).toDateString();
+    meta.streak = (meta.lastDay===y)? meta.streak+1 : 1;
+    meta.lastDay=today;
+  }
+  meta.reviews=(meta.reviews||0)+1; save(LS_META,meta);
+}
+function isDue(c){const s=progress[c.id];return !s || (s.due||0)<=Date.now()}
+function dueCards(){return CARDS.filter(isDue)}
+function mastered(c){const s=progress[c.id];return s && s.interval>=21}
+
+/* ============ Carregar dados ============ */
+async function loadCards(){
+  let base=SEED;
+  try{
+    const r=await fetch("cards.json",{cache:"no-store"});
+    if(r.ok){const j=await r.json(); if(j&&j.cards) base=j.cards;}
+  }catch(e){/* offline: usa SEED */}
+  const map={}; [...base,...userCards].forEach(c=>map[c.id]=c);
+  CARDS=Object.values(map);
+}
+
+/* ============ UI ============ */
+const view=document.getElementById('view');
+let tab="home";
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  tab=b.dataset.tab;
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));
+  render();
+});
+
+function render(){
+  if(tab==="home")return renderHome();
+  if(tab==="review")return renderReview();
+  if(tab==="quiz")return renderQuiz();
+  if(tab==="flash")return renderFlash();
+  if(tab==="sessao")return renderSessao();
+  if(tab==="manage")return renderManage();
+}
+
+/* ============ Sessão de estudo cronometrada (fiscalização) ============ */
+let sessTimer=null;
+function weekStart(ts){const d=new Date(ts);const day=(d.getDay()+6)%7;d.setHours(0,0,0,0);d.setDate(d.getDate()-day);return d.getTime()}
+function statsSemana(){
+  const ws=weekStart(Date.now());
+  const sem=sessions.filter(s=>s.start>=ws);
+  const totalMin=sem.reduce((a,s)=>a+s.durMin,0);
+  const onTime=sem.filter(s=>s.onTime).length;
+  const extraMin=sem.filter(s=>!s.onTime).reduce((a,s)=>a+s.durMin,0);
+  const aderencia=sem.length?Math.round(100*onTime/sem.length):0;
+  const foco=sem.length?(sem.reduce((a,s)=>a+(s.foco||0),0)/sem.length):0;
+  const energia=sem.length?(sem.reduce((a,s)=>a+(s.energia||0),0)/sem.length):0;
+  const rendeu=sem.length?(sem.reduce((a,s)=>a+(s.rendeu||0),0)/sem.length):0;
+  return {n:sem.length,totalMin,extraMin,aderencia,foco,energia,rendeu,
+    horas:(totalMin/60),metaPct:Math.round(100*totalMin/60/META_SEMANAL),
+    sobreMeta:Math.max(0,totalMin/60-META_SEMANAL)};
+}
+function fmtDur(min){const h=Math.floor(min/60),m=Math.round(min%60);return h?`${h}h${String(m).padStart(2,'0')}`:`${m}min`}
+
+function renderSessao(){
+  clearInterval(sessTimer);
+  if(active){ return renderAtiva(); }
+  const st=statsSemana();
+  const hoje=sessions.filter(s=>s.start>=new Date().setHours(0,0,0,0)).sort((a,b)=>b.start-a.start);
+  view.innerHTML=`
+    <h3>⏱️ Iniciar sessão de estudo</h3>
+    <div class="card">
+      <p class="muted">O app carimba a hora real de início e fim — a duração é <b>medida</b>, não digitada. Assim dá pra fiscalizar de verdade.</p>
+      <label>Bloco / momento</label>
+      <select id="s_bloco">
+        ${janelasDoDia(Date.now()).map(j=>`<option>${j.nome}</option>`).join("")}
+        <option>Extra (fora do plano)</option>
+      </select>
+      <label>Tópico</label>
+      <input id="s_topico" placeholder="Ex.: Quant — TVM" />
+      <button class="btn b-acc" style="margin-top:14px" onclick="startSession()">▶️ Iniciar agora</button>
+    </div>
+    <h3>📊 Sua semana</h3>
+    <div class="card">
+      <div class="row">
+        <div class="stat"><b>${st.horas.toFixed(1)}h</b><span>DE ${META_SEMANAL}h META</span></div>
+        <div class="stat"><b>${st.aderencia}%</b><span>NO HORÁRIO</span></div>
+        <div class="stat"><b>+${st.sobreMeta.toFixed(1)}h</b><span>EXTRA</span></div>
+      </div>
+      <div class="bar" style="margin-top:10px"><i style="width:${Math.min(100,st.metaPct)}%;background:${st.metaPct>=100?'var(--ok)':'var(--acc)'}"></i></div>
+      <div class="row" style="margin-top:12px">
+        <div class="stat"><b>${st.foco.toFixed(1)}</b><span>FOCO /5</span></div>
+        <div class="stat"><b>${st.energia.toFixed(1)}</b><span>ENERGIA /5</span></div>
+        <div class="stat"><b>${st.rendeu.toFixed(1)}</b><span>RENDEU /5</span></div>
+      </div>
+    </div>
+    <h3>Hoje (${hoje.length} sessões)</h3>
+    <div class="card">
+      ${hoje.length?hoje.map(s=>`<div class="topicrow"><div class="t">
+        <span>${new Date(s.start).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} • ${s.topico||'—'}</span>
+        <span>${fmtDur(s.durMin)} ${s.onTime?'✅':'➕'}</span></div>
+        <div class="muted" style="font-size:11px">${s.bloco} • foco ${s.foco}/5 • energia ${s.energia}/5 • rendeu ${s.rendeu}/5</div></div>`).join(""):'<p class="muted">Nenhuma sessão hoje ainda.</p>'}
+    </div>`;
+}
+function renderAtiva(){
+  const el=()=> {
+    const elapsed=Math.floor((Date.now()-active.start)/1000);
+    const mm=String(Math.floor(elapsed/60)).padStart(2,'0'), ss=String(elapsed%60).padStart(2,'0');
+    const t=document.getElementById('clock'); if(t)t.textContent=mm+":"+ss;
+  };
+  view.innerHTML=`
+    <div class="card" style="text-align:center">
+      <span class="pill">${active.bloco}</span>
+      <div class="muted" style="margin:6px 0">${active.topico||'Sessão de estudo'}</div>
+      <div id="clock" style="font-size:54px;font-weight:700;letter-spacing:2px;margin:10px 0">00:00</div>
+      <p class="muted" style="font-size:12px">Iniciada às ${new Date(active.start).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} ${active.onTime?'• no horário ✅':'• fora do plano ➕'}</p>
+      <button class="btn b-again" style="margin-top:8px" onclick="stopSession()">⏹️ Encerrar e avaliar</button>
+      <p class="muted" style="font-size:11px;margin-top:10px">Pode fechar o app — o cronômetro continua contando pelo horário real.</p>
+    </div>`;
+  el(); clearInterval(sessTimer); sessTimer=setInterval(el,1000);
+}
+function startSession(){
+  const bloco=document.getElementById('s_bloco').value;
+  const topico=document.getElementById('s_topico').value.trim();
+  const c=classifica(Date.now());
+  active={start:Date.now(),bloco,topico,onTime:c.onTime && !bloco.startsWith("Extra")};
+  save(LS_ACTIVE,active); renderAtiva();
+}
+function stopSession(){
+  clearInterval(sessTimer);
+  const durMin=Math.max(1,Math.round((Date.now()-active.start)/60000));
+  view.innerHTML=`
+    <div class="card">
+      <h3 style="margin-top:0">Sessão de ${fmtDur(durMin)} — como foi?</h3>
+      <label>Foco / concentração</label>${scale('e_foco')}
+      <label>Energia (5 = descansado, 1 = exausto)</label>${scale('e_energia')}
+      <label>Rendimento (quanto aprendeu)</label>${scale('e_rendeu')}
+      <label>Notas (opcional)</label><textarea id="e_notas" placeholder="Ex.: travei em duration; cansado depois do trabalho"></textarea>
+      <button class="btn b-acc" style="margin-top:14px" onclick="saveSession(${durMin})">Salvar sessão</button>
+    </div>`;
+}
+function scale(id){return `<select id="${id}">
+  <option value="5">5 — ótimo</option><option value="4">4 — bom</option>
+  <option value="3" selected>3 — médio</option><option value="2">2 — fraco</option>
+  <option value="1">1 — péssimo</option></select>`;}
+function saveSession(durMin){
+  const c=classifica(active.start);
+  sessions.push({id:Date.now(),start:active.start,end:Date.now(),durMin,
+    bloco:active.bloco,topico:active.topico,onTime:active.onTime,
+    foco:+val('e_foco'),energia:+val('e_energia'),rendeu:+val('e_rendeu'),notas:val('e_notas')});
+  save(LS_SESS,sessions); active=null; localStorage.removeItem(LS_ACTIVE);
+  toast('Sessão registrada ✓'); renderSessao();
+}
+
+function topicStats(){
+  const m={};
+  CARDS.forEach(c=>{m[c.topico]=m[c.topico]||{t:0,mast:0};m[c.topico].t++;if(mastered(c))m[c.topico].mast++});
+  return m;
+}
+
+function renderHome(){
+  const due=dueCards().length, total=CARDS.length;
+  const mast=CARDS.filter(mastered).length;
+  const ts=topicStats();
+  let topics="";
+  Object.keys(ts).sort().forEach(t=>{
+    const p=Math.round(100*ts[t].mast/ts[t].t);
+    topics+=`<div class="topicrow"><div class="t"><span>${t}</span><span>${ts[t].mast}/${ts[t].t}</span></div>
+      <div class="bar"><i style="width:${p}%"></i></div></div>`;
+  });
+  const st=statsSemana();
+  view.innerHTML=`
+    ${active?`<div class="card" style="text-align:center;border-color:var(--ok)"><b>⏱️ Sessão em andamento</b><br><span class="muted">${active.topico||active.bloco}</span><br><button class="btn b-acc" style="max-width:200px;margin:10px auto 0" onclick="go('sessao')">Ver cronômetro</button></div>`:''}
+    <div class="row">
+      <div class="stat"><b>${due}</b><span>VENCIDOS HOJE</span></div>
+      <div class="stat"><b>${mast}</b><span>DOMINADOS</span></div>
+      <div class="stat"><b>${total}</b><span>TOTAL</span></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="stat"><b>${st.horas.toFixed(1)}h</b><span>SEMANA / ${META_SEMANAL}h</span></div>
+      <div class="stat"><b>${st.aderencia}%</b><span>NO HORÁRIO</span></div>
+      <div class="stat"><b>+${st.sobreMeta.toFixed(1)}h</b><span>EXTRA</span></div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="streak">🔥 Sequência: ${meta.streak||0} dia(s) • ${meta.reviews||0} revisões</div>
+      <p class="muted" style="margin:10px 0 14px">${due>0?`Você tem <b style="color:var(--txt)">${due}</b> cards para revisar agora.`:"Tudo em dia! 🎉 Volte amanhã ou faça um Quiz."}</p>
+      <button class="btn b-acc" onclick="go('review')">${due>0?'🔁 Revisar agora':'🎯 Fazer um Quiz'}</button>
+    </div>
+    <h3>Domínio por tópico</h3>
+    <div class="card">${topics||'<p class="muted">Sem cards ainda.</p>'}</div>
+  `;
+}
+function go(t){document.querySelector(`nav button[data-tab="${t}"]`).click()}
+
+/* ---- Revisão (cards vencidos, com SM-2) ---- */
+let queue=[],qi=0;
+function renderReview(){
+  queue=dueCards(); qi=0;
+  if(!queue.length){view.innerHTML=`<div class="center">✅ Nada vencido agora.<br><br><button class="btn b-acc" style="max-width:200px;margin:auto" onclick="go('home')">Voltar</button></div>`;return}
+  showReviewCard();
+}
+function showReviewCard(){
+  if(qi>=queue.length){view.innerHTML=`<div class="center">🎉 Revisão concluída!<br>${queue.length} cards.<br><br><button class="btn b-acc" style="max-width:220px;margin:auto" onclick="go('home')">Início</button></div>`;render2();return}
+  const c=queue[qi];
+  const head=`<span class="pill">${c.topico}</span><span class="pill">${c.tipo}</span><span class="pill">${qi+1}/${queue.length}</span>`;
+  if(c.tipo==="questao"){
+    view.innerHTML=`<div class="card">${head}<div class="q">${c.enunciado}</div>
+      <div id="opts">${c.opcoes.map((o,i)=>`<button class="opt" onclick="answerReview(${i})">${"ABC"[i]}) ${o}</button>`).join("")}</div>
+      <div class="answer" id="ans"><b>Resposta: ${"ABC"[c.correta]}</b><br>${c.explicacao||""}</div>
+      <div id="rate" class="hide"></div></div>`;
+  }else{
+    view.innerHTML=`<div class="card">${head}
+      <div class="flip" id="flip"><div>${c.frente}</div><div class="muted" style="margin-top:14px">👆 toque para ver</div></div>
+      <div class="answer" id="ans">${c.verso}</div>
+      <button class="btn b-ghost" id="showBtn" onclick="flipShow()">Mostrar resposta</button>
+      <div id="rate" class="hide" style="margin-top:12px"></div></div>`;
+    document.getElementById('flip').onclick=flipShow;
+  }
+}
+function flipShow(){document.getElementById('ans').classList.add('show');
+  const b=document.getElementById('showBtn'); if(b)b.classList.add('hide'); showRate();}
+function answerReview(i){
+  const c=queue[qi];
+  document.querySelectorAll('#opts .opt').forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===c.correta)b.classList.add('correct');
+    else if(idx===i)b.classList.add('wrong');
+  });
+  document.getElementById('ans').classList.add('show');
+  showRate(i===c.correta);
+}
+function showRate(correct){
+  const r=document.getElementById('rate'); r.classList.remove('hide');
+  r.innerHTML=`<p class="muted" style="text-align:center;margin:4px 0 6px">Quão bem você lembrou?</p>
+    <div class="btnrow">
+      <button class="btn b-again" onclick="rate('again')">Errei</button>
+      <button class="btn b-hard" onclick="rate('hard')">Difícil</button>
+      <button class="btn b-good" onclick="rate('good')">Bom</button>
+      <button class="btn b-easy" onclick="rate('easy')">Fácil</button>
+    </div>`;
+}
+function rate(r){review(queue[qi].id,r);qi++;showReviewCard()}
+function render2(){/* refresh streak after finishing */}
+
+/* ---- Quiz (gamificado: pontos, streak, timer) ---- */
+let qz={list:[],i:0,score:0,streak:0,timer:null,t:0};
+function renderQuiz(){
+  const qs=CARDS.filter(c=>c.tipo==="questao");
+  if(!qs.length){view.innerHTML=`<div class="center">Sem questões no banco ainda.</div>`;return}
+  qz={list:shuffle([...qs]).slice(0,Math.min(10,qs.length)),i:0,score:0,streak:0,timer:null,t:0};
+  showQuiz();
+}
+function showQuiz(){
+  if(qz.i>=qz.list.length){
+    clearInterval(qz.timer);
+    view.innerHTML=`<div class="center"><h2 style="color:var(--txt)">🏁 Fim!</h2>
+      <p>Pontos: <b style="color:var(--acc);font-size:22px">${qz.score}</b></p>
+      <p class="muted">${qz.list.length} questões • melhor sequência respeita acertos consecutivos</p>
+      <button class="btn b-acc" style="max-width:220px;margin:14px auto" onclick="renderQuiz()">Jogar de novo</button></div>`;
+    return;
+  }
+  const c=qz.list[qz.i];
+  qz.t=20; clearInterval(qz.timer);
+  view.innerHTML=`<div class="card">
+    <div class="row" style="margin-bottom:6px"><span class="pill">Q ${qz.i+1}/${qz.list.length}</span>
+      <span class="pill">⏱️ <span id="tmr">${qz.t}</span>s</span>
+      <span class="pill">⭐ ${qz.score}</span><span class="pill">🔥 ${qz.streak}</span></div>
+    <div class="q">${c.enunciado}</div>
+    <div id="opts">${c.opcoes.map((o,i)=>`<button class="opt" onclick="quizAns(${i})">${"ABC"[i]}) ${o}</button>`).join("")}</div>
+    <div class="answer" id="ans"><b>Resp: ${"ABC"[c.correta]}</b> — ${c.explicacao||""}</div>
+  </div>`;
+  qz.timer=setInterval(()=>{qz.t--;const e=document.getElementById('tmr');if(e)e.textContent=qz.t;
+    if(qz.t<=0){clearInterval(qz.timer);quizAns(-1)}},1000);
+}
+function quizAns(i){
+  clearInterval(qz.timer);
+  const c=qz.list[qz.i], ok=(i===c.correta);
+  document.querySelectorAll('#opts .opt').forEach((b,idx)=>{b.disabled=true;
+    if(idx===c.correta)b.classList.add('correct'); else if(idx===i)b.classList.add('wrong')});
+  document.getElementById('ans').classList.add('show');
+  if(ok){qz.streak++;qz.score+=10+Math.max(0,qz.t)+ (qz.streak>=3?5:0);}
+  else{qz.streak=0; review(c.id,'again');/* errou no quiz => entra p/ revisão */}
+  setTimeout(()=>{qz.i++;showQuiz()}, ok?700:1900);
+}
+
+/* ---- Relâmpago (flashcards rápidos, tempos mortos) ---- */
+let fl={list:[],i:0,flipped:false};
+function renderFlash(){
+  const fs=shuffle(CARDS.filter(c=>c.tipo!=="questao"));
+  if(!fs.length){view.innerHTML=`<div class="center">Sem flashcards/conceitos ainda.</div>`;return}
+  fl={list:fs,i:0,flipped:false}; showFlash();
+}
+function showFlash(){
+  if(fl.i>=fl.list.length){view.innerHTML=`<div class="center">⚡ Fim da rodada!<br><br><button class="btn b-acc" style="max-width:200px;margin:auto" onclick="renderFlash()">De novo</button></div>`;return}
+  const c=fl.list[fl.i];
+  view.innerHTML=`<div class="card">
+    <span class="pill">${c.topico}</span><span class="pill">${fl.i+1}/${fl.list.length}</span>
+    <div class="flip" onclick="flFlip()" id="flip">
+      <div>${fl.flipped?c.verso:c.frente}</div>
+      <div class="muted" style="margin-top:14px">${fl.flipped?'':'👆 toque para virar'}</div></div>
+    <div class="btnrow">
+      <button class="btn b-again" onclick="flNext('again')">Não lembrei</button>
+      <button class="btn b-good" onclick="flNext('good')">Lembrei</button>
+    </div></div>`;
+}
+function flFlip(){fl.flipped=!fl.flipped;showFlash()}
+function flNext(r){review(fl.list[fl.i].id,r);fl.i++;fl.flipped=false;showFlash()}
+
+/* ---- Dados: adicionar card, exportar, importar, reset ---- */
+function renderManage(){
+  view.innerHTML=`
+    <h3>➕ Adicionar card</h3>
+    <div class="card">
+      <label>Tipo</label>
+      <select id="f_tipo" onchange="toggleTipo()">
+        <option value="flashcard">Flashcard</option>
+        <option value="conceito">Conceito difícil</option>
+        <option value="questao">Questão (múltipla escolha)</option>
+      </select>
+      <label>Tópico</label><input id="f_topico" placeholder="Ex.: Ethics" />
+      <label>Subtópico</label><input id="f_sub" placeholder="Ex.: Standards" />
+      <label>Dificuldade (1-5)</label><input id="f_dif" type="number" min="1" max="5" value="3" />
+      <div id="fcFields">
+        <label>Frente (pergunta / o que te confundiu)</label><textarea id="f_frente"></textarea>
+        <label>Verso (resposta / explicação)</label><textarea id="f_verso"></textarea>
+      </div>
+      <div id="qFields" class="hide">
+        <label>Enunciado</label><textarea id="f_enun"></textarea>
+        <label>Opção A</label><input id="f_a" />
+        <label>Opção B</label><input id="f_b" />
+        <label>Opção C</label><input id="f_c" />
+        <label>Correta</label><select id="f_correta"><option value="0">A</option><option value="1">B</option><option value="2">C</option></select>
+        <label>Explicação</label><textarea id="f_exp"></textarea>
+      </div>
+      <button class="btn b-acc" style="margin-top:12px" onclick="addCard()">Salvar card</button>
+    </div>
+    <h3>💾 Backup / Sincronização</h3>
+    <div class="card">
+      <p class="muted">Exporte para fazer backup do progresso ou levar para outro aparelho. Exporte os cards para colar no <b>cards.json</b> do Git.</p>
+      <div class="btnrow"><button class="btn b-ghost" onclick="exportProgress()">Exportar progresso</button>
+        <button class="btn b-ghost" onclick="exportCardsJson()">Exportar cards.json</button></div>
+      <button class="btn b-ghost" style="margin-top:8px" onclick="exportLog()">📋 Exportar log de estudos (p/ o Claude auditar)</button>
+      <label style="margin-top:12px">Importar (progresso ou cards)</label>
+      <input type="file" id="imp" accept="application/json" onchange="importFile(event)" />
+      <button class="btn b-ghost" style="margin-top:14px;background:rgba(255,93,108,.15);border-color:var(--bad)" onclick="resetProgress()">⚠️ Zerar progresso</button>
+    </div>
+    <div class="center muted" style="font-size:11px">Cards adicionados aqui ficam neste dispositivo até você exportar para o Git.</div>
+  `;
+  toggleTipo();
+}
+function toggleTipo(){const t=document.getElementById('f_tipo').value;
+  document.getElementById('qFields').classList.toggle('hide',t!=='questao');
+  document.getElementById('fcFields').classList.toggle('hide',t==='questao');}
+function addCard(){
+  const tipo=val('f_tipo'),topico=val('f_topico')||"Geral",sub=val('f_sub')||"";
+  const dif=+val('f_dif')||3;
+  const id=(topico.slice(0,4)+'-'+Date.now().toString(36)).toLowerCase().replace(/\s/g,'');
+  let c={id,tipo,topico,subtopico:sub,dificuldade:dif,tags:[],fonte:"app"};
+  if(tipo==='questao'){
+    c.enunciado=val('f_enun');c.opcoes=[val('f_a'),val('f_b'),val('f_c')];
+    c.correta=+val('f_correta');c.explicacao=val('f_exp');
+    if(!c.enunciado||!c.opcoes[0]){return toast('Preencha enunciado e opções')}
+  }else{
+    c.frente=val('f_frente');c.verso=val('f_verso');
+    if(!c.frente||!c.verso){return toast('Preencha frente e verso')}
+  }
+  userCards.push(c);save(LS_USER,userCards);CARDS.push(c);
+  toast('Card adicionado ✓');renderManage();
+}
+function val(id){return document.getElementById(id).value.trim()}
+function download(name,obj){
+  const b=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();
+}
+function exportProgress(){download('cfa-progresso.json',{progress,userCards,meta,sessions});toast('Progresso exportado')}
+function exportLog(){
+  // CSV legível para auditoria (cole pro Claude analisar)
+  const head="data,inicio,fim,duracao_min,bloco,no_horario,topico,foco,energia,rendeu,notas\n";
+  const rows=sessions.slice().sort((a,b)=>a.start-b.start).map(s=>{
+    const d=new Date(s.start);
+    return [d.toLocaleDateString('pt-BR'),d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+      new Date(s.end).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),s.durMin,
+      `"${s.bloco}"`,s.onTime?'SIM':'NAO',`"${s.topico||''}"`,s.foco,s.energia,s.rendeu,`"${(s.notas||'').replace(/"/g,"'")}"`].join(",");
+  }).join("\n");
+  const b=new Blob([head+rows],{type:"text/csv"});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='cfa-log-estudos.csv';a.click();
+  toast('Log exportado (envie pro Claude)');
+}
+function exportCardsJson(){download('cards.json',{meta:{versao:1,atualizado:new Date().toISOString().slice(0,10)},cards:CARDS});toast('cards.json exportado')}
+function importFile(e){
+  const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{try{const j=JSON.parse(rd.result);
+    if(j.progress)progress={...progress,...j.progress};
+    if(j.userCards){const m={};[...userCards,...j.userCards].forEach(c=>m[c.id]=c);userCards=Object.values(m)}
+    if(j.cards){const m={};[...userCards,...j.cards].forEach(c=>m[c.id]=c);userCards=Object.values(m)}
+    if(j.meta)meta={...meta,...j.meta};
+    if(j.sessions){const m={};[...sessions,...j.sessions].forEach(s=>m[s.id]=s);sessions=Object.values(m);save(LS_SESS,sessions)}
+    save(LS_PROG,progress);save(LS_USER,userCards);save(LS_META,meta);
+    loadCards().then(()=>{toast('Importado ✓');render()});
+  }catch(err){toast('Arquivo inválido')}};
+  rd.readAsText(f);
+}
+function resetProgress(){if(confirm('Zerar TODO o progresso (intervalos, streak)? Os cards continuam.')){
+  progress={};meta={streak:0,lastDay:null,reviews:0};save(LS_PROG,progress);save(LS_META,meta);toast('Progresso zerado');render()}}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+
+/* ============ Init ============ */
+(async function(){
+  const exam=new Date("2026-11-16T15:00:00-03:00");
+  const dias=Math.max(0,Math.ceil((exam-Date.now())/864e5));
+  document.getElementById('dateInfo').textContent="🎯 Exame 16/nov/2026 15h • faltam "+dias+" dias";
+  await loadCards();
+  render();
+})();
+</script>
+</body>
+</html>
